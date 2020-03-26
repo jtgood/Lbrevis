@@ -1,0 +1,49 @@
+Month,Station,Temperature,Salinity
+1,Anchorage,12.3,22
+1,Fort Johnson,12.4,19
+1,Lower Ashley,12.5,15
+1,Upper Ashley,12.2,10
+2,Anchorage,13.3,25
+2,Fort Johnson,13.5,22
+2,Lower Ashley,14,19
+2,Upper Ashley,14.3,12
+3,Anchorage,15.8,27
+3,Fort Johnson,16.3,23
+3,Lower Ashley,17.3,18
+3,Upper Ashley,17.3,14
+4,Anchorage,22.6,22
+4,Fort Johnson,26.8,18
+4,Lower Ashley,25.5,14
+4,Upper Ashley,26,6
+5,Anchorage,24.4,26
+5,Fort Johnson,24.8,23
+5,Lower Ashley,25.4,21
+5,Upper Ashley,25.5,16
+6,Anchorage,28.5,26.6
+6,Fort Johnson,28.3,27
+6,Lower Ashley,29.4,23.8
+6,Upper Ashley,29.6,20.1
+7,Anchorage,29.4,23
+7,Fort Johnson,29.8,20.5
+7,Lower Ashley,29.9,13.5
+7,Upper Ashley,29,3.6
+8,Anchorage,30,29.5
+8,Fort Johnson,30.3,23.8
+8,Lower Ashley,31,20.7
+8,Upper Ashley,31.3,15.9
+9,Anchorage,27.2,29.2
+9,Fort Johnson,27.3,21.4
+9,Lower Ashley,27.4,16.2
+9,Upper Ashley,27.7,8.3
+10,Anchorage,24.5,29.4
+10,Fort Johnson,25,26
+10,Lower Ashley,24.6,23.3
+10,Upper Ashley,24.3,16.9
+11,Anchorage,20.4,27.3
+11,Fort Johnson,20.6,23.8
+11,Lower Ashley,20.5,23.1
+11,Upper Ashley,20,20.8
+12,Anchorage,13.7,27.2
+12,Fort Johnson,13.7,28
+12,Lower Ashley,13.2,23.6
+12,Upper Ashley,13.3,16.8
