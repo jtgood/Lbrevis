@@ -8,8 +8,10 @@
   #Stations included (from Marine to Fresh water) Anchorage, Fort Johnson, Lower Ashley, Upper Ashley
   #Squid were measured for sex, mantle length, gladius length (the pen of the squid), and length overall
   #abiotic factors of temperature and salinity were collected at each sampling event.
+  
+#The code follows a structure of creating multiple sub-data frames, visualizing relationships, and then significant variable interaction analyses
 
-# The code follows a structure of creating multiple sub-data frames, visualizing relationships, and then significant variable interaction analyses
+#Results and plots should be able to be recreated fairly easily, but feel free to contact me if you encounter issues or question.  Thank you for your review and I look forward to hearing your feedback!
 
 #Acknowledgmemnts:
 #College of Charleston Graduate Program in Marine Biology
