@@ -30,7 +30,7 @@ boxplot(Mantle.Length ~ Month,
         ylab = "Average Mantle Length",
         col = "blue",
         border = "black")
-
+        
 #Plot of Mantle Length per Station
 boxplot(Mantle.Length ~ Station,
         data = LenbyMoSt,
@@ -58,44 +58,64 @@ boxplot(Gladius.Length ~ Station,
         col = "red",
         border = "black") 
 
-anovaMant <- aov(Mantle.Length ~ Month +Station, data = LenbyMoSt)
-summary(anovaMant)
-anovaGlad <- aov(Gladius.Length ~ Month + Station, data = LenbyMoSt)
-summary(anovaGlad)
-
-#Squid Sex per Month and Station
-SexbyMoSt <- squid %>%
-  group_by(Month, Station) %>%
-  summarize(Sex = length(Sex))
-View(SexbyMoSt)
-
-#Abiotic Factors
-GladAbioStation<-squid %>%
-  group_by(Station, Salinity, Temperature) %>%
-  summarize(Gladius.Length = mean(Gladius.Length, na.rm =T))
-View(GladAbioStation)
-plot(Gladius.Length ~ Salinity, data = GladAbioStation)
-
-anova2 <- aov(Gladius.Length[Station] ~ Salinity[Station] + Temperature [Station],
-              data = GladAbioStation)
-summary(anova2)
-
-GladAbioMonth <- squid %>%
-  group_by(Month, Salinity, Temperature) %>%
-  summarize(Gladius.Length = mean(Gladius.Length, na.rm = T))
-View(GladAbioMonth)
-
-
-# show boxplots for lengths:
-boxplot(Gladius.Length ~ Month, data = squid)
-
-# regression of mantle length and glaidus length
+#Regression of mantle length and glaidus length 
 plot(Mantle.Length ~ Gladius.Length, data = squid)
 mod <- lm(Mantle.Length ~ Gladius.Length, data = squid)
 abline(mod, col='red')
 summary(lm(Mantle.Length ~ Gladius.Length, data = squid))
 #R2 value of 0.954
 anova(update(mod, . ~ . + as.factor(Month)))
+
+#ANOVA of Mantle Length and Station 
+anovaMant <- aov(Mantle.Length ~ Month * Station, data = LenbyMoSt)
+summary(anovaMant)
+#ANOVA of Gladius Length and Station
+anovaGlad <- aov(Gladius.Length ~ Month * Station, data = LenbyMoSt)
+summary(anovaGlad)
+
+#Gladius length of a squid more reliable as a measurment due to consistency of 
+#structure and resistence of chitin compared to soft mantle.  Gladius length 
+#chosen as default length measurment.
+
+#Squid Sex per Month and Station
+SexbyMoSt <- squid %>%
+  group_by(Month, Station) %>%
+  summarize(table(Sex, na.rm = T))
+View(SexbyMoSt)
+
+class(squid$Sex)
+Sex <- as.character(squid$Sex)
+sitesex <-
+  squid %>%
+  group_by(Month, Station) %>%
+  summarise(length(squid$Sex, na.rm = TRUE))
+View(sitesex)
+
+#Abiotic Factors on Gladius Length in relation to Station
+GladAbioStation<-squid %>%
+  group_by(Station, Salinity, Temperature) %>%
+  summarize(Gladius.Length = mean(Gladius.Length, na.rm =T))
+View(GladAbioStation)
+plot(Gladius.Length ~ Salinity, data = GladAbioStation)
+
+#ANOVA to test for gladius lengths at each station with regards to temperature
+anova2 <- aov(Gladius.Length[Station] ~ Temperature [Station], data = GladAbioStation)
+summary(anova2)
+
+#Abiotic Factors on Gladius Length in relation to Month
+GladAbioMonth <- squid %>%
+  group_by(Month, Salinity, Temperature) %>%
+  summarize(Gladius.Length = mean(Gladius.Length, na.rm = T))
+View(GladAbioMonth)
+
+
+
+
+
+
+
+
+
 ###################
 
 
@@ -104,32 +124,4 @@ anova(update(mod, . ~ . + as.factor(Month)))
 
 
 
-
-squid <- as.data.frame(squid)
-squid
-sitesex <-
-  squid %>%
-  group_by(Station) %>%
-  group_by(Month) %>%
-  summarise(squid, length(squid$Sex, na.rm = TRUE))
-  
-sitesex
-
-squid <- as.data.frame(squid)
-squid$Month <- as.character(squid$Month)
-squid$Mantle.Length <- as.numeric(squid$Mantle.Length)
-
-mantlelengthmonth <- 
-  squid%>%
-  group_by(Month)%>%
-  summarise(ML_Month = mean(Mantle.Length, na.rm = TRUE), ML_MonthSE = sd(Mantle.Length, na.rm = TRUE)/(sqrt(count(Mantle.Length, na.rm = TRUE))))
-mantlelengthmonth
-
-summarize()
-aggregate()
-
-squid$Month
-squid$Mantle.Length
-class(squid$Mantle.Length)
-class(squid$Month)
 
