@@ -30,7 +30,7 @@ boxplot(Mantle.Length ~ Month,
         ylab = "Average Mantle Length",
         col = "blue",
         border = "black")
-        
+
 #Plot of Mantle Length per Station
 boxplot(Mantle.Length ~ Station,
         data = LenbyMoSt,
@@ -108,15 +108,8 @@ GladAbioMonth <- squid %>%
   summarize(Gladius.Length = mean(Gladius.Length, na.rm = T))
 View(GladAbioMonth)
 
-
-
-
-
-
-
-
-
 ###################
+
 
 
 
