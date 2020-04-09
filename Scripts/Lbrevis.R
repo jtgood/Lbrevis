@@ -1,19 +1,32 @@
 squid <- read.csv("./Data/Lbrevis QM Data.csv", header = TRUE)
 abiotic <- read.csv("./Data/Lbrevis Abiotic Data.csv", header = TRUE)
-install.packages("dplyr")
+install.packages("tidyverse")
+install.packages("purrr")
+library(purrr)
+library(tidyverse)
 library(dplyr)
+library(ggplot2)
 
-########################
-month <- c(1:12)
-month.name[month]
-head(squid)
-# summarize quantiative variables
+
+# Organizations and Plots
 
 #Squid Abundance per Month and Station
 AbundbyMoSt <- squid %>%
   group_by(Month, Station) %>%
-  summarize(Abundance = count(Squid.Number))
+  mutate(Abundance = length(Squid.Number))
 View(AbundbyMoSt)
+ggplot(aes(x = Month, y = Abundance), data = AbundbyMoSt)+
+  geom_bar(stat = "identity", position="dodge")+#default ggplot will use count
+  #need to specify x and y using stat = "identity"
+  facet_wrap(~Station, ncol=1)
+
+#Squid Sex per Month and Station
+squidsex<-subset(squid, squid$sex!="")
+View(squidsex)
+squidsex <- squid %>% 
+  drop_na(Sex)
+ggplot(aes(x=Month, fill = Sex), data = squidsex)+
+  geom_histogram(position = "dodge")+facet_wrap(~Station, ncol=1)
 
 #Average Mantle and Gladius Length per Month and Station
 LenbyMoSt<-squid %>%
@@ -66,10 +79,18 @@ summary(lm(Mantle.Length ~ Gladius.Length, data = squid))
 #R2 value of 0.954
 anova(update(mod, . ~ . + as.factor(Month)))
 
-#ANOVA of Mantle Length and Station 
+
+#Anova Analyses
+
+#Anova of squid abundance against month and station
+anovaAbund <- aov(Abundance ~ Month * Station, data = AbundbyMoSt)
+summary(anovaAbund)
+
+#Anova of Mantle Length and Station 
 anovaMant <- aov(Mantle.Length ~ Month * Station, data = LenbyMoSt)
 summary(anovaMant)
-#ANOVA of Gladius Length and Station
+
+#Anova of Gladius Length and Station
 anovaGlad <- aov(Gladius.Length ~ Month * Station, data = LenbyMoSt)
 summary(anovaGlad)
 
@@ -77,19 +98,41 @@ summary(anovaGlad)
 #structure and resistence of chitin compared to soft mantle.  Gladius length 
 #chosen as default length measurment.
 
-#Squid Sex per Month and Station
-SexbyMoSt <- squid %>%
-  group_by(Month, Station) %>%
-  summarize(table(Sex, na.rm = T))
-View(SexbyMoSt)
+#Anova for female gladius lengths with station with interaction with abiotic factors
+females <- subset(squid, squid$Sex == "F")
+anovafem <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = females)
+summary(anovafem)
+plot(anovafem) #trumpeted residuals (may have to log transform)
 
-class(squid$Sex)
-Sex <- as.character(squid$Sex)
-sitesex <-
-  squid %>%
-  group_by(Month, Station) %>%
-  summarise(length(squid$Sex, na.rm = TRUE))
-View(sitesex)
+#Anova for male gladius length with station with interaction with temperature
+males <- subset(squid, squid$Sex == "M")
+anovamale <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = males)
+summary(anovamale)
+plot(anovamale)
+
+#Anova for juvenile gladius length with station with interaction with temperatur
+juvenile <- subset(squid, squid$Sex == "J")
+anovaJuv <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = juvenile)
+summary(anovaJuv)
+plot(anovaJuv)
+
+#Possible seasonal differences in sex gladius lengths
+
+#Anova for female gladius lengths with month with interaction with abiotic factors
+anovafemMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = females)
+summary(anovafemMo)
+plot(anovafemMo)
+
+#Anova for male gladius length with month with interaction with temperature
+anovamaleMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = males)
+summary(anovamaleMo)
+plot(anovamaleMo)
+
+#Anova for juvenile gladius length with month with interaction with temperatur
+anovaJuvMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = juvenile)
+summary(anovaJuvMo)
+plot(anovaJuvMo)
+
 
 #Abiotic Factors on Gladius Length in relation to Station
 GladAbioStation<-squid %>%
@@ -97,20 +140,28 @@ GladAbioStation<-squid %>%
   summarize(Gladius.Length = mean(Gladius.Length, na.rm =T))
 View(GladAbioStation)
 plot(Gladius.Length ~ Salinity, data = GladAbioStation)
-
-#ANOVA to test for gladius lengths at each station with regards to temperature
-anova2 <- aov(Gladius.Length[Station] ~ Temperature [Station], data = GladAbioStation)
-summary(anova2)
+plot(Gladius.Length ~ Temperature, data = GladAbioStation)
+anovaAbioSt <- aov(Gladius.Length ~ Station * Temperature + Salinity,
+                   data = GladAbioStation)
+summary(anovaAbioSt)
+plot(anovaAbioSt)
 
 #Abiotic Factors on Gladius Length in relation to Month
 GladAbioMonth <- squid %>%
   group_by(Month, Salinity, Temperature) %>%
   summarize(Gladius.Length = mean(Gladius.Length, na.rm = T))
 View(GladAbioMonth)
+anovaAbioMo <- aov(Gladius.Length ~ Month * Temperature + Salinity,
+                   data = GladAbioMonth)
+summary(anovaAbioMo)
+plot(anovaAbioMo)
 
 ###################
 
+#Working on future way to replace month number with month name
 
+#If data doesn't recognize the type of variable then need to redifne
+squid$Month<-factor(squid$Month, levels=c("1","2","3"..."7","8","9"...."12"))
 
 
 
