@@ -99,10 +99,7 @@ summary(anovaGlad)
 #chosen as default length measurment.
 
 #Anova for female gladius lengths with station with interaction with abiotic factors
-females <- subset(squid, squid$Sex == "F")
-anovafem <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = females)
-summary(anovafem)
-plot(anovafem) #trumpeted residuals (may have to log transform)
+
 
 #Anova for male gladius length with station with interaction with temperature
 males <- subset(squid, squid$Sex == "M")
