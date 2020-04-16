@@ -82,8 +82,8 @@ anova(update(mod, . ~ . + as.factor(Month)))
 
 #Anova Analyses
 
-#Anova of squid abundance against month and station
-anovaAbund <- aov(Abundance ~ Month * Station, data = AbundbyMoSt)
+#Anova of squid abundance against month and station and abiotic variables
+anovaAbund <- aov(Abundance ~ Month * Station + Temperature * Salinity, data = AbundbyMoSt)
 summary(anovaAbund)
 
 #Anova of Mantle Length and Station 
@@ -107,7 +107,13 @@ anovamale <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = males
 summary(anovamale)
 plot(anovamale)
 
-#Anova for juvenile gladius length with station with interaction with temperatur
+#anova for female gladisu length with stations with interaction with temperature
+females <- subset(squid, squid$Sex == "F")
+anovafemale <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = females)
+summary(anovafemale)
+plot(anovafemale)
+
+#Anova for juvenile gladius length with station with interaction with temperature
 juvenile <- subset(squid, squid$Sex == "J")
 anovaJuv <- aov(Gladius.Length ~ Station * Temperature + Salinity, data = juvenile)
 summary(anovaJuv)
@@ -115,21 +121,21 @@ plot(anovaJuv)
 
 #Possible seasonal differences in sex gladius lengths
 
-#Anova for female gladius lengths with month with interaction with abiotic factors
-anovafemMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = females)
-summary(anovafemMo)
-plot(anovafemMo)
 
 #Anova for male gladius length with month with interaction with temperature
 anovamaleMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = males)
 summary(anovamaleMo)
 plot(anovamaleMo)
 
+#Anova for female gladius lengths with month with interaction with abiotic factors
+anovafemMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = females)
+summary(anovafemMo)
+plot(anovafemMo)
+
 #Anova for juvenile gladius length with month with interaction with temperatur
 anovaJuvMo <- aov(Gladius.Length ~ Month * Temperature + Salinity, data = juvenile)
 summary(anovaJuvMo)
 plot(anovaJuvMo)
-
 
 #Abiotic Factors on Gladius Length in relation to Station
 GladAbioStation<-squid %>%
