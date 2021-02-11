@@ -1,13 +1,15 @@
+#GENERAL WORKUP 2019#
+
 squid <- read.csv("./Data/Lbrevis QM Data.csv", header = TRUE)
 abiotic <- read.csv("./Data/Lbrevis Abiotic Data.csv", header = TRUE)
 install.packages("tidyverse")
 install.packages("purrr")
+install.packages("reshape2")
 library(purrr)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
-
-
+view(squid)
 # Organizations and Plots
 
 #Squid Abundance per Month and Station
@@ -21,7 +23,7 @@ ggplot(aes(x = Month, y = Abundance), data = AbundbyMoSt)+
   facet_wrap(~Station, ncol=1)
 
 #Squid Sex per Month and Station
-squidsex<-subset(squid, squid$sex!="")
+squidsex<-subset(squid, squid$Sex!="")
 View(squidsex)
 squidsex <- squid %>% 
   drop_na(Sex)
@@ -70,6 +72,9 @@ boxplot(Gladius.Length ~ Station,
         ylab = "Average Gladius Length",
         col = "red",
         border = "black") 
+
+#Plot of Gladius Length over Month per Station
+
 
 #Regression of mantle length and glaidus length 
 plot(Mantle.Length ~ Gladius.Length, data = squid)
@@ -165,10 +170,3 @@ plot(anovaAbioMo)
 
 #If data doesn't recognize the type of variable then need to redifne
 squid$Month<-factor(squid$Month, levels=c("1","2","3"..."7","8","9"...."12"))
-
-
-
-
-
-
-
