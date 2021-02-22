@@ -12,18 +12,27 @@ library(ggplot2)
 view(squid)
 # Organizations and Plots
 
+squid$Month.name = factor(squid$Month.name, levels = Month.name)
+squid.Anc$Month.name = factor(squid.Anc$Month.name, levels = Month.name)
+View(squid.Anc)
+squid.Ftj$Month.name = factor(squid.Ftj$Month.name, levels = Month.name)
+view(squid.Ftj)
+squid.LA$Month.name = factor(squid.LA$Month.name, levels = Month.name)
+squid.UA$Month.name = factor(squid.UA$Month.name, levels = Month.name)
+
 #Squid Abundance per Month and Station
 AbundbyMoSt <- squid %>%
   group_by(Month, Station) %>%
   mutate(Abundance = length(Squid.Number))
 View(AbundbyMoSt)
+
 ggplot(aes(x = Month, y = Abundance), data = AbundbyMoSt)+
   geom_bar(stat = "identity", position="dodge")+#default ggplot will use count
   #need to specify x and y using stat = "identity"
   facet_wrap(~Station, ncol=1)
 
 #Squid Sex per Month and Station
-squidsex<-subset(squid, squid$Sex!="")
+squidsex <-subset(squid, squid$Sex!="")
 View(squidsex)
 squidsex <- squid %>% 
   drop_na(Sex)
@@ -31,7 +40,7 @@ ggplot(aes(x=Month, fill = Sex), data = squidsex)+
   geom_histogram(position = "dodge")+facet_wrap(~Station, ncol=1)
 
 #Average Mantle and Gladius Length per Month and Station
-LenbyMoSt<-squid %>%
+LenbyMoSt <- squid %>%
   group_by(Month, Station) %>%
   summarize(Mantle.Length = mean(Mantle.Length, na.rm = T),
             Gladius.Length = mean(Gladius.Length, na.rm =T))
@@ -81,15 +90,115 @@ plot(Mantle.Length ~ Gladius.Length, data = squid)
 mod <- lm(Mantle.Length ~ Gladius.Length, data = squid)
 abline(mod, col='red')
 summary(lm(Mantle.Length ~ Gladius.Length, data = squid))
-#R2 value of 0.954
+#R2 value of 0.9561
 anova(update(mod, . ~ . + as.factor(Month)))
 
+#ANOVA ANALYSES
+#Official recommendation:
+#1) These data are more farily normal data
+#2) Heteroscedacity suggests normality
+#3) ANOVA is desired
 
-#Anova Analyses
+#Gladius Length vs Station
+squid.aov = aov(Gladius.Length~Station, data = squid)
+plot(squid.aov, datax=T)
+summary(squid.aov)
+TukeyHSD(squid.aov)
+plot(TukeyHSD(squid.aov))
+##Station does not have an effect on gladius length 
+#Signficiant differences in squid lengths in certain stations
+#May be best to assess month by month difference in gladius lengths 
+#for each station seperately:
+
+#Gladius Length vs Month + Station
+#ANCHORAGE
+squid.aov.month.anc = aov(Gladius.Length~Month.name, data = squid.Anc)
+plot(squid.aov.month.anc, datax=T)
+summary(squid.aov.month.anc)
+TukeyHSD(squid.aov.month.anc)
+#Month of May statistically powerful for Anchorage 
+#FORT JOHNSON
+squid.aov.month.ftj = aov(Gladius.Length~Month.name, data = squid.Ftj)
+plot(squid.aov.month.ftj, datax=T)
+summary(squid.aov.month.ftj)
+TukeyHSD(squid.aov.month.ftj)
+#Month of May statistically powerful for Fort Johnson
+#LOWER ASHLEY
+squid.aov.month.la = aov(Gladius.Length~Month.name, data = squid.LA)
+plot(squid.aov.month.la, datax=T)
+summary(squid.aov.month.la)
+TukeyHSD(squid.aov.month.la)
+#Month of May and October statistically powerful for Lower Ashley
+#UPPER ASHLEY
+squid.aov.month.ua = aov(Gladius.Length~Month.name, data = squid.UA)
+plot(squid.aov.month.ua, datax=T)
+summary(squid.aov.month.ua)
+TukeyHSD(squid.aov.month.ua)
+#Month of May statistically powerful for Upper Ashley
+
+#Gladius Length vs Sex
+squid.aov.sex = aov(Gladius.Length~Sex, data = squid)
+summary(squid.aov.sex)
+boxplot(squid$Gladius.Length~squid$Sex)
+TukeyHSD(squid.aov.sex)
+plot(TukeyHSD(squid.aov.sex))
+#All sexes are significantly different from each other
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #Anova of squid abundance against month and station and abiotic variables
 anovaAbund <- aov(Abundance ~ Month * Station + Temperature * Salinity, data = AbundbyMoSt)
-summary(anovaAbund)
+summary(anovaAbund20)
 
 #Anova of Mantle Length and Station 
 anovaMant <- aov(Mantle.Length ~ Month * Station, data = LenbyMoSt)
