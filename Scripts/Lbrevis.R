@@ -9,8 +9,19 @@ library(purrr)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(ggpubr)
 view(squid)
-# Organizations and Plots
+
+#Organizations and Plots
+#Month Names
+Month = c(1:12)
+Month.name = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+squid.month.names = cbind(Month, Month.name)
+squid = merge(squid,squid.month.names)
+View(squid)
+
+#Binding each subset with Month names
+squid$Month.name = factor(squid$Month.name, levels = Month.name)
 
 squid$Month.name = factor(squid$Month.name, levels = Month.name)
 squid.Anc$Month.name = factor(squid.Anc$Month.name, levels = Month.name)
@@ -22,22 +33,27 @@ squid.UA$Month.name = factor(squid.UA$Month.name, levels = Month.name)
 
 #Squid Abundance per Month and Station
 AbundbyMoSt <- squid %>%
-  group_by(Month, Station) %>%
-  mutate(Abundance = length(Squid.Number))
+  group_by(Month.name, Station) %>% 
+  mutate(Abundance = length(Squid.Number[!is.na(Squid.Number)]))
 View(AbundbyMoSt)
 
-ggplot(aes(x = Month, y = Abundance), data = AbundbyMoSt)+
-  geom_bar(stat = "identity", position="dodge")+#default ggplot will use count
+ggplot(aes(x = Month.name, y = Abundance), data = AbundbyMoSt)+
+  geom_bar(stat = "identity", position="dodge", fill = "blue")+
+  labs(x ="Month")+
+  #default ggplot will use count
   #need to specify x and y using stat = "identity"
-  facet_wrap(~Station, ncol=1)
+  facet_wrap(~Station, ncol=1)+
+  coord_cartesian(ylim = c(0, 100))
+
 
 #Squid Sex per Month and Station
-squidsex <-subset(squid, squid$Sex!="")
+squidsex<-subset(squid, squid$Sex!="")
 View(squidsex)
 squidsex <- squid %>% 
   drop_na(Sex)
 ggplot(aes(x=Month, fill = Sex), data = squidsex)+
   geom_histogram(position = "dodge")+facet_wrap(~Station, ncol=1)
+
 
 #Average Mantle and Gladius Length per Month and Station
 LenbyMoSt <- squid %>%
@@ -82,9 +98,6 @@ boxplot(Gladius.Length ~ Station,
         col = "red",
         border = "black") 
 
-#Plot of Gladius Length over Month per Station
-
-
 #Regression of mantle length and glaidus length 
 plot(Mantle.Length ~ Gladius.Length, data = squid)
 mod <- lm(Mantle.Length ~ Gladius.Length, data = squid)
@@ -92,6 +105,7 @@ abline(mod, col='red')
 summary(lm(Mantle.Length ~ Gladius.Length, data = squid))
 #R2 value of 0.9561
 anova(update(mod, . ~ . + as.factor(Month)))
+
 
 #ANOVA ANALYSES
 #Official recommendation:
@@ -143,6 +157,13 @@ boxplot(squid$Gladius.Length~squid$Sex)
 TukeyHSD(squid.aov.sex)
 plot(TukeyHSD(squid.aov.sex))
 #All sexes are significantly different from each other
+
+#Sex vs Month
+squid.aov.sexmonth = aov(Month~Sex, data = squid)
+plot(squid.aov.sexmonth, datax=T)
+summary(squid.aov.sexmonth)
+TukeyHSD(squid.aov.sexmonth)
+
 
 
 

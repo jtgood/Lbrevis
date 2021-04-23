@@ -10,17 +10,45 @@ library(dplyr)
 library(ggplot2)
 view(squid20)
 
-# Organizations and Plots
+#Organizations and Plots
+#Month Names
+Month = c(1:12)
+Month.nameND = c("Jan", "Feb", "Mar(ND)", "Apr(ND)", "May(ND)", "Jun", "Jul(ND)", "Aug", "Sep", "Oct", "Nov", "Dec")
+squid.month.namesND = cbind(Month, Month.nameND)
+squid20 = merge(squid20, squid.month.namesND)
+view(squid20)
+
+squid20$Month.nameND = factor(squid20$Month.nameND, levels = Month.nameND)
+#Filtering for data for each site
+squid.Anc.20 <- filter(squid20, Station == "Anchorage")
+view(squid.Anc.20)
+squid.Ftj.20 = filter(squid20, Station == "Fort Johnson")
+view(squid.Ftj.20)
+squid.LA.20 = filter(squid20, Station == "Lower Ashley")
+squid.UA.20 = filter(squid20, Station == "Upper Ashley")
+view(squid.UA.20)
+
+#Binding each subset with Month names
+squid.Anc.20$Month.nameND = factor(squid.Anc.20$Month.nameND, levels = Month.nameND)
+View(squid.Anc.20)
+squid.Ftj.20$Month.nameND = factor(squid.Ftj.20$Month.nameND, levels = Month.nameND)
+view(squid.Ftj.20)
+squid.LA.20$Month.nameND = factor(squid.LA.20$Month.nameND, levels = Month.nameND)
+squid.UA.20$Month.nameND = factor(squid.UA.20$Month.nameND, levels = Month.nameND)
 
 #Squid Abundance per Month and Station
 AbundbyMoSt20 <- squid20 %>%
-  group_by(Month, Station) %>%
-  mutate(Abundance = length(Squid.Number))
-View(AbundbyMoSt20)
-ggplot(aes(x = Month, y = Abundance), data = AbundbyMoSt20)+
-  geom_bar(stat = "identity", position="dodge")+#default ggplot will use count
+  group_by(Month.nameND, Station) %>% 
+  mutate(Abundance = length(Squid.Number[!is.na(Squid.Number)]))
+
+ggplot(aes(x = Month.nameND, y = Abundance), data = AbundbyMoSt20)+
+  geom_bar(stat = "identity", position="dodge", fill = "red")+
+  labs(x ="Month")+
+  #default ggplot will use count
   #need to specify x and y using stat = "identity"
-  facet_wrap(~Station, ncol=1)
+  facet_wrap(~Station, ncol=1)+
+  coord_cartesian(ylim = c(0, 100))
+
 
 #Squid Sex per Month and Station
 squidsex20<-subset(squid20, squid20$Sex!="")
@@ -29,6 +57,8 @@ squidsex20 <- squid20 %>%
   drop_na(Sex)
 ggplot(aes(x=Month, fill = Sex), data = squidsex20)+
   geom_histogram(position = "dodge")+facet_wrap(~Station, ncol=1)
+
+
  
 
 #Average Mantle and Gladius Length per Month and Station
@@ -73,9 +103,6 @@ boxplot(Gladius.Length ~ Station,
         ylab = "Average Gladius Length",
         col = "red",
         border = "black") 
-
-#Plot of Gladius Length over Month per Station
-
 
 #Regression of mantle length and glaidus length 
 plot(Mantle.Length ~ Gladius.Length, data = squid20)
