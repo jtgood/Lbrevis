@@ -140,3 +140,6 @@ sizedist.month3 = ggarrange(squid.Sep.hist, squid.Oct.hist, squid.Nov.hist,
                             squid.Dec.hist, ncol = 1, nrow = 4, align = "hv")
 sizedist.month3
 
+
+#Size Distribution with Sex and Station:
+

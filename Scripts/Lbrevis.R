@@ -45,6 +45,16 @@ ggplot(aes(x = Month.name, y = Abundance), data = AbundbyMoSt)+
   facet_wrap(~Station, ncol=1)+
   coord_cartesian(ylim = c(0, 100))
 
+#Same thing but with black and white theme
+ggplot(aes(x = Month.name, y = Abundance), data = AbundbyMoSt)+
+  geom_bar(stat = "identity", position="dodge")+
+  labs(x ="Month")+
+  theme_bw()+
+  #default ggplot will use count
+  #need to specify x and y using stat = "identity"
+  facet_wrap(~Station, ncol=1)+
+  coord_cartesian(ylim = c(0, 100))
+
 
 #Squid Sex per Month and Station
 squidsex<-subset(squid, squid$Sex!="")
@@ -99,7 +109,8 @@ boxplot(Gladius.Length ~ Station,
         border = "black") 
 
 #Regression of mantle length and glaidus length 
-plot(Mantle.Length ~ Gladius.Length, data = squid)
+plot(Mantle.Length ~ Gladius.Length, data = squid, xlab="Gladius Length (cm)",
+     ylab="Mantle Length (cm)")
 mod <- lm(Mantle.Length ~ Gladius.Length, data = squid)
 abline(mod, col='red')
 summary(lm(Mantle.Length ~ Gladius.Length, data = squid))
