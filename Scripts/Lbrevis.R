@@ -62,7 +62,45 @@ View(squidsex)
 squidsex <- squid %>% 
   drop_na(Sex)
 ggplot(aes(x=Month, fill = Sex), data = squidsex)+
-  geom_histogram(position = "dodge")+facet_wrap(~Station, ncol=1)
+  geom_bar(position = position_dodge(preserve= "single"))+
+  labs(x = "Month", y = "Abundance")+
+  facet_wrap(~Station, ncol=1)
+  
+  
+  
+#############GUS####################
+install.packages("remotes")
+remotes::install_github("coolbutuseless/ggpattern")
+library(ggpattern)
+  
+ggplot(aes(x=as.factor(Month.name), fill = Sex), data = squidsex)+
+   # geom_bar(position = position_dodge(preserve= "single"))+
+    geom_bar_pattern(
+      position = position_dodge(preserve= "single"),
+      aes(
+        pattern = Sex, 
+                ),  
+      fill                  = 'white',
+      colour                = 'black',
+      pattern_spacing = 0.025
+      ) + theme_bw()+
+  labs(x = "Month", y = "Abundance")+ 
+    facet_wrap(~Station, ncol=1)
+
+squidsex2 = squidsex %>% 
+  group_by(Station, Month.name, Sex) %>% 
+  summarise(Abundance=n())
+View(squidsex2)
+
+ss_Anchorage = filter(squidsex2, Station == "Anchorage")
+ss_Anchorage.aov = aov(Abundance~Sex %in%  
+                     Month.name, data = ss_Anchorage)
+summary(ss_Anchorage.aov)
+##Pool the data of the three stations that have the same distribution patterns,
+##Does squid abundance by sex differ by month
+##G Stat or Chi Square Test = Do one for each station (could pool for collective)
+
+
 
 
 #Average Mantle and Gladius Length per Month and Station
